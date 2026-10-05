@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>ORS Patient Portal</title>
+    <base href="/orsportal/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/orsportal/assets/icons/ors_logo.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    <link rel="manifest" href="/orsportal/manifest.webmanifest">
+    <meta name="theme-color" content="#1E3770">
+<link rel="stylesheet" href="/orsportal/styles.889a64d200209afc4fd7.css"></head>
+
+<body class="mat-typography">
+    <app-root>
+        <div class="container">
+            <div class="row">
+                <div id="loader" style=" bottom: 0;height: 175px;left: 0;margin: auto;position: absolute;right: 0;top: 0;width: 175px;">
+                    <img class="img-responsive" src="/orsportal/assets/icons/ors_logo_2.png" width="100%" alt="Loading">
+                    <img class="img-responsive" src="/orsportal/assets/icons/loading.gif" width="100%" alt="">
+
+                    <!--   <img class="img-responsive" src="./assets/icons/ors_logo_2.png" width="100%" alt="Loading">
+                    <img class="img-responsive" src="./assets/icons/loading.gif" width="100%" alt="">
+ -->
+                </div>
+            </div>
+        </div>
+    </app-root>
+    <noscript>Please enable JavaScript to continue using this application.</noscript>
+<script src="/orsportal/runtime.b611759540e5686052ab.js" defer></script><script src="/orsportal/polyfills.5ac0986323fcf97c2784.js" defer></script><script src="/orsportal/scripts.be404308b5e50b33f0d1.js" defer></script><script src="/orsportal/main.1e0c09b443ca8caf1b2c.js" defer></script></body>
+
+</html>

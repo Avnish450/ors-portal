@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORS Patient Portal | Online Registration System | Government of India</title>
+  <meta name="description" content="Official Online Registration System (ORS) for online OPD appointments, teleconsultation, lab reports, and blood availability across AIIMS and central government hospitals." />
+  <meta name="theme-color" content="#1b2e5a" />
+  <link rel="icon" type="image/png" href="assets/icons/ors_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="mat-typography">
+
+  <!-- ==============================================================
+       1. IMMEDIATE LANGUAGE SELECTION MODAL (FIRST THING ON OPEN)
+       ============================================================== -->
+  <div id="lang-overlay" class="lang-overlay" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
+    <div class="lang-overlay__backdrop"></div>
+    <div class="lang-overlay__panel">
+      <!-- Modal Header -->
+      <div class="lang-overlay__header">
+        <div class="lang-overlay__logo-box">
+          <img src="assets/icons/ors_logo.png" alt="ORS Official Logo" class="lang-overlay__logo" />
+        </div>
+        <div class="lang-overlay__title-area">
+          <div class="lang-overlay__badge-row">
+            <span class="gov-badge-official">🏛️ भारत सरकार | Government of India</span>
+            <span class="gov-badge-free">✅ 100% Free Public Service</span>
+            <span class="gov-badge-secure">🔒 Official Portal: ors.gov.in</span>
+          </div>
+          <h2 id="lang-modal-title" class="lang-overlay__main-title">
+            Select Your Language / अपनी भाषा चुनें
+          </h2>
+          <p class="lang-overlay__sub-title">
+            Welcome to ORS Patient Portal. Choose from all 22 official languages of India with native voice guidance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Search & Voice Assist Bar -->
+      <div class="lang-overlay__toolbar">
+        <div class="lang-search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="lang-search-input" placeholder="Search language / भाषा खोजें (e.g., Hindi, Tamil, বাংলা)..." oninput="filterLanguages()" />
+        </div>
+        <button class="voice-help-btn" onclick="playVoiceWelcome()" title="Listen to voice guide / ऑडियो निर्देश सुनें">
+          <span class="speaker-icon">🔊</span>
+          <span id="voice-help-label">Audio Guide / बोलकर सुनें</span>
+        </button>
+      </div>
+
+      <!-- 22 Languages Interactive Grid -->
+      <div class="lang-overlay__grid-container">
+        <div class="lang-overlay__grid" id="lang-grid" role="radiogroup" aria-label="Official Languages of India">
+          <!-- Dynamically populated from languages.js -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="lang-overlay__footer">
+        <div class="lang-overlay__fraud-warning">
+          <span class="warning-icon">⚠️</span>
+          <div class="warning-text">
+            <strong>Security Notice:</strong> Beware of fake booking portals charging money! ORS appointments are strictly <strong>100% FREE</strong>. Verify browser URL is always <code>https://ors.gov.in</code>.
+          </div>
+        </div>
+        <div class="lang-overlay__action-row">
+          <button id="lang-proceed-btn" class="btn-proceed" onclick="confirmLanguageSelection()">
+            <span id="proceed-btn-text">Continue in English →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       MAIN PORTAL WRAPPER (EXACT REPLICA OF https://ors.gov.in/orsportal)
+       ============================================================== -->
+  <div id="main-portal-view" class="portal-root">
+
+    <!-- 1. TOP UTILITY HEADER BAR (Dark Navy #1b2e5a) -->
+    <div class="top-nav-bar">
+      <div class="top-nav-container">
+        <!-- Left Side: Accessibility Plus, Medical Care Badge, Digital India Initiative -->
+        <div class="top-nav-left">
+          <button class="accessibility-plus-btn" onclick="openAccessibilityMenu()" title="Accessibility Options" aria-label="Accessibility Settings">
+            <span>+</span>
+          </button>
+          <span class="medical-care-badge" data-i18n="medical_care">MEDICAL CARE</span>
+          <span class="digital-india-sub" data-i18n="digital_india_sub">A DIGITAL INDIA INITIATIVE</span>
+        </div>
+
+        <!-- Right Side: Playstore Link, Quick Links, Live NIC Cloud Status, Language Dropdown -->
+        <div class="top-nav-right">
+          <a href="https://play.google.com/store/apps/details?id=in.gov.ors" target="_blank" class="playstore-link" rel="noopener">
+            <span data-i18n="download_app">Download the app from playstore</span>
+            <img src="assets/icons/playstore_n.png" alt="Google Play Store" class="playstore-badge-img" />
+          </a>
+          <span class="nav-divider">|</span>
+          <a href="javascript:void(0)" onclick="openModal('faq-modal')" class="top-link" data-i18n="faqs">FAQs</a>
+          <span class="nav-divider">|</span>
+          <a href="javascript:void(0)" onclick="openModal('feedback-modal')" class="top-link" data-i18n="feedback">Feedback</a>
+          <span class="nav-divider">|</span>
+          <a href="javascript:void(0)" onclick="openModal('contact-modal')" class="top-link" data-i18n="contact">Contact</a>
+          <span class="nav-divider">|</span>
+          <a href="javascript:void(0)" onclick="openModal('whats-new-modal')" class="top-link" data-i18n="whats_new">Whats New</a>
+          <span class="nav-divider">|</span>
+          <a href="javascript:void(0)" onclick="openModal('nodal-officers-modal')" class="top-link" data-i18n="nodal_officers">List of Nodal Officers</a>
+          <span class="nav-divider">|</span>
+
+          <!-- Live NIC Server Status Pill (Feature Fix for NIC Server Downtime) -->
+          <div class="nic-status-pill" onclick="openModal('system-health-modal')" title="Click to view real-time server health and failover mirror">
+            <span class="pulse-status-dot"></span>
+            <span id="nic-status-label">NIC Cloud: Online (18ms)</span>
+          </div>
+          <span class="nav-divider">|</span>
+
+          <!-- Language Dropdown -->
+          <div class="lang-dropdown-wrapper">
+            <button class="lang-dropdown-btn" onclick="reopenLanguageModal()" id="current-lang-display" title="Change Language / भाषा बदलें">
+              <span id="top-lang-name">English</span>
+              <span class="dropdown-arrow">▾</span>
+            </button>
+          </div>
+
+          <!-- Accessibility Person Icon -->
+          <button class="accessibility-icon-btn" onclick="openAccessibilityMenu()" title="High Contrast & Font Settings" aria-label="Accessibility">
+            <span class="accessibility-person-icon">👤</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. STICKY WHITE NAVIGATION HEADER -->
+    <header class="main-white-header">
+      <div class="header-container">
+        <!-- Left: Genuine ORS Colorful Logo + Dark Maroon Text -->
+        <a href="javascript:void(0)" onclick="scrollToTop()" class="ors-brand-link">
+          <img src="assets/icons/ors_logo.png" alt="ORS Online Registration System" class="ors-header-logo" />
+          <div class="ors-brand-text">
+            <span class="ors-brand-title" data-i18n="ors_portal_title">Online Registration System</span>
+          </div>
+        </a>
+
+        <!-- Right: Home (Active with Green Underline), Dashboard, Create ABHA, Yellow Register/Login -->
+        <nav class="primary-nav-items">
+          <a href="javascript:void(0)" onclick="scrollToTop()" class="nav-item-link active">
+            <span class="nav-icon">🏠</span>
+            <span data-i18n="nav_home">Home</span>
+          </a>
+          <a href="javascript:void(0)" onclick="openModal('dashboard-modal')" class="nav-item-link">
+            <span class="nav-icon">📊</span>
+            <span data-i18n="nav_dashboard">Dashboard</span>
+          </a>
+          <a href="javascript:void(0)" onclick="openModal('abha-creator-modal')" class="nav-item-link">
+            <span data-i18n="nav_create_abha">Create ABHA(Health ID)</span>
+          </a>
+
+          <!-- Yellow Pill Button: Register/Login with Arrow -->
+          <button class="yellow-login-pill-btn" onclick="openModal('auth-modal')" id="header-login-btn">
+            <span class="login-arrow-icon">➔</span>
+            <span data-i18n="btn_register_login">Register/Login</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 3. SUB-HEADER ANNOUNCEMENT BAR (Light Gray) -->
+    <div class="announcement-sub-bar">
+      <div class="announcement-content">
+        <p data-i18n="sub_announcement">
+          Online Registration System (ORS) is a Digital India initiative aims to provide online access to hospital services for patient, integrated with Ayushman Bharat Health Account.
+        </p>
+      </div>
+    </div>
+
+    <!-- ANTI-FRAUD SECURITY BANNER (Feature Fix for Proliferation of Fake Portals) -->
+    <div class="security-alert-ribbon">
+      <div class="security-ribbon-inner">
+        <span class="shield-badge">🛡️ OFFICIAL GOVT NOTICE</span>
+        <span class="security-text" data-i18n="security_notice_text">
+          Beware of counterfeit booking links & agents demanding fees. AIIMS & ORS OPD slots are <strong>100% FREE</strong>. Verify exact address: <code>https://ors.gov.in</code>
+        </span>
+        <button class="verify-shield-btn" onclick="openModal('fraud-checker-modal')">
+          <span data-i18n="verify_authenticity">Verify Slip / Report Scam →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. HERO CAROUSEL BANNER (Deep Indigo #3B4B96) -->
+    <section class="hero-carousel-section">
+      <div class="hero-carousel-container">
+        <!-- Left Slider Arrow -->
+        <button class="carousel-control prev" onclick="prevHeroSlide()" aria-label="Previous Slide">‹</button>
+
+        <!-- Slides Wrapper -->
+        <div class="hero-slides-wrapper" id="hero-slider">
+          <!-- Slide 1: Tele-Consultation (Exact Live Site Slide) -->
+          <div class="hero-slide active" id="hero-slide-1">
+            <div class="hero-slide-content">
+              <div class="hero-left-text">
+                <h1 class="hero-heading-main" data-i18n="hero_slide1_title">
+                  Online Appointment Booking<br/>
+                  For Tele-Consultation<br/>
+                  Stay Home e-OPD
+                </h1>
+                <button class="yellow-hero-btn" onclick="openBookingWizard('teleconsultation')">
+                  <span data-i18n="btn_register_login">Register/Login</span>
+                </button>
+              </div>
+              <div class="hero-right-visual">
+                <div class="doctor-graphic-card">
+                  <div class="phone-mockup-wrap">
+                    <img src="assets/images/health.png" alt="Doctor Consultation" class="doctor-art-img" onerror="this.src='assets/icons/ors_logo.png'" />
+                    <div class="ehospital-badge-box">
+                      <span class="ehospital-text">NIC eHospital</span>
+                    </div>
+                  </div>
+                  <div class="tele-consult-caption">
+                    <p data-i18n="hero_tele_caption">
+                      <strong>Consult Your Doctor</strong><br/>
+                      through video - consultation<br/>
+                      While you Stay Safe at home
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: ABHA Integration (Live Site Slide) -->
+          <div class="hero-slide" id="hero-slide-2">
+            <div class="hero-slide-content">
+              <div class="hero-left-text">
+                <h1 class="hero-heading-main" data-i18n="hero_slide2_title">
+                  ABHA - Ayushman Bharat<br/>
+                  Health Account (Health ID)<br/>
+                  Digital Health for Every Indian
+                </h1>
+                <p class="hero-subtext-white" data-i18n="hero_slide2_desc">
+                  Create your 14-digit digital health ID. Access medical records, lab reports, and fast-track OPD entry across 2,100+ hospitals seamlessly.
+                </p>
+                <button class="yellow-hero-btn" onclick="openModal('abha-creator-modal')">
+                  <span data-i18n="nav_create_abha">Create ABHA(Health ID)</span>
+                </button>
+              </div>
+              <div class="hero-right-visual">
+                <img src="assets/images/abdm.png" alt="ABHA Digital Health" class="abha-slide-img" onerror="this.src='assets/images/abha_1.jpg'" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: AIIMS 8:00 AM Slot Opening & Smart Waitlist (Feature Fix for Slot Scarcity) -->
+          <div class="hero-slide" id="hero-slide-3">
+            <div class="hero-slide-content">
+              <div class="hero-left-text">
+                <div class="tatkal-badge-pill">⚡ DAILY 8:00 AM SLOT QUOTA RELEASE</div>
+                <h1 class="hero-heading-main" data-i18n="hero_slide3_title">
+                  AIIMS & Central Hospital Slots<br/>
+                  Smart Waitlist & Auto-Alerts
+                </h1>
+                <p class="hero-subtext-white">
+                  Next slot drop in: <strong id="hero-tatkal-countdown" class="highlight-yellow">05 hrs 28 mins 14 secs</strong>. Join the automated waitlist to secure instant SMS/WhatsApp bookings on cancellations.
+                </p>
+                <button class="yellow-hero-btn" onclick="openBookingWizard('regular')">
+                  <span>Book Available Slots →</span>
+                </button>
+              </div>
+              <div class="hero-right-visual">
+                <div class="tatkal-card-box">
+                  <div class="tatkal-header">AIIMS Live Quota Status</div>
+                  <div class="tatkal-item"><span>AIIMS New Delhi</span><span class="status-badge-green">Slots Active</span></div>
+                  <div class="tatkal-item"><span>AIIMS Rishikesh</span><span class="status-badge-green">Slots Active</span></div>
+                  <div class="tatkal-item"><span>Safdarjung Hospital</span><span class="status-badge-green">18 Available</span></div>
+                  <div class="tatkal-item"><span>Dr. RML Hospital</span><span class="status-badge-green">24 Available</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Slider Arrow -->
+        <button class="carousel-control next" onclick="nextHeroSlide()" aria-label="Next Slide">›</button>
+      </div>
+    </section>
+
+    <!-- 5. PRIMARY ACTION CAPSULE BUTTONS (3 Large Centered Rounded Pills) -->
+    <section class="primary-actions-section">
+      <div class="primary-actions-container">
+        <!-- 1. Book Appointment (Royal Blue #3366cc) -->
+        <button class="action-pill-btn pill-blue" onclick="openBookingWizard('regular')" id="btn-book-appointment">
+          <span class="action-icon">🚶</span>
+          <span class="action-text" data-i18n="btn_book_appointment">Book Appointment</span>
+        </button>
+
+        <!-- 2. Book Teleconsultation Appointment (Teal #00a896) -->
+        <button class="action-pill-btn pill-teal" onclick="openBookingWizard('teleconsultation')" id="btn-book-tele">
+          <span class="action-icon">📹</span>
+          <span class="action-text" data-i18n="btn_book_teleconsultation">Book Teleconsultation Appointment</span>
+        </button>
+
+        <!-- 3. Scan and Share (Dark Teal #0e7c7b) -->
+        <button class="action-pill-btn pill-dark-teal" onclick="openModal('scan-share-modal')" id="btn-scan-share">
+          <span class="action-icon">🔗</span>
+          <span class="action-text" data-i18n="btn_scan_and_share">Scan and Share</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 6. "OTHER FACILITIES" SECTION (4 Cards with Rounded Corners & Circular Graphics) -->
+    <section class="other-facilities-section">
+      <div class="facilities-container">
+        <h2 class="section-title-centered" data-i18n="other_facilities_title">Other Facilities</h2>
+
+        <div class="facilities-grid">
+          <!-- Card 1: e-OPD Card -->
+          <div class="facility-card" onclick="openFacilityModal('opd-card')">
+            <div class="facility-icon-circle bg-green-tint">
+              <img src="assets/images/OP_SLIP.png" alt="e-OPD Card" class="facility-art-img" onerror="this.src='assets/icons/ors.png'" />
+            </div>
+            <h3 class="facility-card-name" data-i18n="facility_opd_card">e-OPD Card</h3>
+          </div>
+
+          <!-- Card 2: Payments (Real animated GIF) -->
+          <div class="facility-card" onclick="openFacilityModal('payments')">
+            <div class="facility-icon-circle bg-blue-tint">
+              <img src="assets/images/mobile_payment.gif" alt="Payments" class="facility-art-img" />
+            </div>
+            <h3 class="facility-card-name" data-i18n="facility_payments">Payments</h3>
+          </div>
+
+          <!-- Card 3: Lab Report (Real animated GIF) -->
+          <div class="facility-card" onclick="openFacilityModal('lab-report')">
+            <div class="facility-icon-circle bg-indigo-tint">
+              <img src="assets/images/lab_report.gif" alt="Lab Report" class="facility-art-img" />
+            </div>
+            <h3 class="facility-card-name" data-i18n="facility_lab_report">Lab Report</h3>
+          </div>
+
+          <!-- Card 4: Blood Availability (Crisp Vector SVG) -->
+          <div class="facility-card" onclick="openFacilityModal('blood-availability')">
+            <div class="facility-icon-circle bg-red-tint">
+              <img src="assets/images/blood_drop.svg" alt="Blood Availability" class="facility-art-img" />
+            </div>
+            <h3 class="facility-card-name" data-i18n="facility_blood">Blood Availability</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. "ORS IS INTEGRATED WITH ABHA (HEALTH ID)" SECTION -->
+    <section class="abha-integration-section">
+      <div class="abha-container">
+        <h2 class="section-title-centered" data-i18n="abha_section_title">ORS is integrated with ABHA (Health ID)</h2>
+        <div class="title-underline"></div>
+
+        <p class="abha-description-text" data-i18n="abha_section_desc">
+          ABHA (earlier known as Health ID) is an acronym for Ayushman Bharat Health Account. Using ABHA (Health ID) is the first step towards creating safer and efficient digital health records for you and your family. It enables your interaction with participating healthcare providers, and allows you to receive your digital lab reports, prescriptions and diagnosis seamlessly from verified healthcare professionals and health service providers.
+        </p>
+
+        <!-- 2 Video Cards Side-by-Side (Genuine Assets: abha_1.jpg and abha_2.jpg) -->
+        <div class="abha-video-grid">
+          <!-- Video Card 1: ABHA -->
+          <div class="abha-video-card" onclick="openVideoPlayer('abha')">
+            <div class="video-thumbnail-wrap">
+              <img src="assets/images/abha_1.jpg" alt="ABHA Overview" class="abha-thumbnail-img" />
+              <div class="play-overlay-button">
+                <span class="play-icon-shape">▶</span>
+              </div>
+              <span class="video-caption-label">ABHA</span>
+            </div>
+          </div>
+
+          <!-- Video Card 2: Benefits of ABHA -->
+          <div class="abha-video-card" onclick="openVideoPlayer('benefits')">
+            <div class="video-thumbnail-wrap">
+              <img src="assets/images/abha_2.jpg" alt="Benefits of ABHA" class="abha-thumbnail-img" />
+              <div class="play-overlay-button">
+                <span class="play-icon-shape">▶</span>
+              </div>
+              <span class="video-caption-label">Benefits of ABHA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dark Blue Pill Button: Click Here to Know More -->
+        <div class="abha-cta-row">
+          <button class="dark-blue-know-more-btn" onclick="openModal('abha-info-modal')">
+            <span data-i18n="btn_click_know_more">Click Here to Know More</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. "FEATURES OF ONLINE REGISTRATION SYSTEM" SECTION -->
+    <section class="ors-features-section">
+      <div class="features-container">
+        <h2 class="section-title-centered" data-i18n="features_section_title">Features of Online Registration System</h2>
+        <div class="title-underline"></div>
+
+        <p class="features-description-text" data-i18n="features_section_desc">
+          Online Registration System (ORS) is a framework to link various hospitals across the country for online appointment system for getting consultation where counter based OPD registration and appointment system through Hospital Management Information System (HMIS) has been digitalized. The application has been hosted on the cloud services of NIC. Portal facilitates online appointments with various departments of different Hospitals using ABHA(Ayushman Bharat Health Account).
+        </p>
+
+        <!-- 3 Feature Cards with Dark Royal Blue Header Blocks -->
+        <div class="features-cards-grid">
+          <!-- Card 1: Simple Appointment Process -->
+          <div class="feature-blue-card">
+            <div class="feature-card-header">
+              <span class="header-glyph">⚡</span>
+              <h3 data-i18n="feature_card1_title">Simple Appointment Process</h3>
+            </div>
+            <div class="feature-card-body">
+              <p data-i18n="feature_card1_text">
+                For your first visit to hospital, registration and appointment with doctor is made simpler. All you have to do is verify yourself using ABHA(Ayushman Bharat Health Account), Select Hospital and Department, Select date of Appointment and receive SMS for Appointment.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2: Hospital On Boarding -->
+          <div class="feature-blue-card">
+            <div class="feature-card-header">
+              <span class="header-glyph">➕</span>
+              <h3 data-i18n="feature_card2_title">Hospital On Boarding</h3>
+            </div>
+            <div class="feature-card-body">
+              <p data-i18n="feature_card2_text">
+                Hospitals can come on board this platform and provide their appointment slots for online booking by patients. The system facilitates Hospitals to easily manage their registration and appointment process and monitor the flow of patients.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3: Dashboard Reports -->
+          <div class="feature-blue-card">
+            <div class="feature-card-header">
+              <span class="header-glyph">⊞</span>
+              <h3 data-i18n="feature_card3_title">Dashboard Reports</h3>
+            </div>
+            <div class="feature-card-body">
+              <p data-i18n="feature_card3_text">
+                Total number of Hospitals for which appointment can be taken through web along with their departments for which online appointment can be taken can be seen in reports. Detail reports showing information about New and Old patients taking appointment through this portal can be seen.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. "EVERY HOSPITALS HAS MOVED ONLINE, WHY STAY BEHIND ?" BANNER (Authentic Graphic: background.jpg) -->
+    <section class="hospital-onboarding-banner" style="background-image: url('assets/images/background.jpg');">
+      <div class="onboarding-overlay-layer">
+        <div class="onboarding-content-container">
+          <h2 class="onboarding-title-text" data-i18n="hospital_banner_title">Every Hospitals has moved online, why stay behind ?</h2>
+
+          <div class="onboarding-buttons-row">
+            <!-- Blue PDF Pill: ORS OnBoarding Manual -->
+            <button class="pill-action-btn btn-pdf-blue" onclick="downloadManual()">
+              <span class="btn-glyph">📄 PDF</span>
+              <span data-i18n="btn_onboarding_manual">ORS OnBoarding Manual</span>
+            </button>
+
+            <!-- Teal Plus Pill: Hospital Join Free -->
+            <button class="pill-action-btn btn-join-teal" onclick="openModal('hospital-join-modal')">
+              <span class="btn-glyph">➕</span>
+              <span data-i18n="btn_hospital_join">Hospital Join Free</span>
+            </button>
+
+            <!-- Coral Red Pill: Hospital Login -->
+            <button class="pill-action-btn btn-login-coral" onclick="openModal('hospital-login-modal')">
+              <span class="btn-glyph">➔]</span>
+              <span data-i18n="btn_hospital_login">Hospital Login</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. "HIGHLIGHTS" METRIC SECTION -->
+    <section class="highlights-metrics-section">
+      <div class="highlights-container">
+        <h2 class="section-title-centered" data-i18n="highlights_title">Highlights</h2>
+        <div class="title-underline"></div>
+
+        <div class="metrics-cards-grid">
+          <!-- Metric Card 1: Number of Hospitals -->
+          <div class="metric-white-card">
+            <div class="metric-icon-box">
+              <span class="metric-symbol">🏥</span>
+            </div>
+            <div class="metric-data-box">
+              <span class="metric-label" data-i18n="metric_num_hospitals">Number of Hospitals</span>
+              <span class="metric-count" id="count-hospitals">2103</span>
+            </div>
+            <a href="javascript:void(0)" onclick="openModal('dashboard-modal')" class="metric-more-link" data-i18n="more_link">More...</a>
+          </div>
+
+          <!-- Metric Card 2: Online Appointments Taken Today -->
+          <div class="metric-white-card">
+            <div class="metric-icon-box">
+              <span class="metric-symbol">💼</span>
+            </div>
+            <div class="metric-data-box">
+              <span class="metric-label" data-i18n="metric_today_appointments">Online Appointments Taken Today</span>
+              <span class="metric-count" id="count-today-appts">432</span>
+            </div>
+            <a href="javascript:void(0)" onclick="openModal('dashboard-modal')" class="metric-more-link" data-i18n="more_link">More...</a>
+          </div>
+
+          <!-- Metric Card 3: Total Online Appointments -->
+          <div class="metric-white-card">
+            <div class="metric-icon-box">
+              <span class="metric-symbol">👥</span>
+            </div>
+            <div class="metric-data-box">
+              <span class="metric-label" data-i18n="metric_total_appointments">Total Online Appointments</span>
+              <span class="metric-count" id="count-total-appts">14497490</span>
+            </div>
+            <a href="javascript:void(0)" onclick="openModal('dashboard-modal')" class="metric-more-link" data-i18n="more_link">More...</a>
+          </div>
+        </div>
+
+        <div class="last-appointment-timestamp">
+          <span data-i18n="last_appointment_label">Last Online Appointment Taken On : </span>
+          <span id="live-last-appt-time">30/09/2026 01:38 AM</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. OFFICIAL PARTNER LOGOS BANNER (Official Light Strip) -->
+    <div class="portal-partner-strip">
+      <div class="footer-container">
+        <!-- 5 Official Government Partner Logos in Crisp Native Colors -->
+        <div class="footer-partner-logos-row">
+          <div class="gov-logo-unit">
+            <img src="assets/icons/emblem.png" alt="Ministry of Health and Family Welfare" class="partner-logo-img emblem-fix" />
+            <div class="gov-logo-caption">
+              <span>Ministry of Health &amp; Family Welfare</span>
+              <span>Government of India</span>
+            </div>
+          </div>
+
+          <div class="gov-logo-unit">
+            <img src="assets/icons/emblem.png" alt="Ministry of Electronics and Information Technology" class="partner-logo-img emblem-fix" />
+            <div class="gov-logo-caption">
+              <span>Ministry of Electronics and</span>
+              <span>Information Technology</span>
+              <span>Government of India</span>
+            </div>
+          </div>
+
+          <div class="gov-logo-unit">
+            <img src="assets/icons/digital.png" alt="Digital India" class="partner-logo-img digital-fix" />
+          </div>
+
+          <div class="gov-logo-unit">
+            <img src="assets/icons/nic_logo.png" alt="National Informatics Centre" class="partner-logo-img nic-fix" />
+          </div>
+
+          <div class="gov-logo-unit">
+            <img src="assets/icons/GIGW.png" alt="Guidelines for Indian Government Websites" class="partner-logo-img gigw-fix" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. OFFICIAL GOVERNMENT FOOTER (Dark Navy #1b2e5a) -->
+    <footer class="official-portal-footer">
+      <div class="footer-container">
+
+        <!-- Footer Navigation Links -->
+        <div class="footer-legal-links-row">
+          <a href="javascript:void(0)" onclick="openLegalModal('privacy')" data-i18n="footer_privacy">Privacy Policy</a>
+          <span class="footer-link-sep">|</span>
+          <a href="javascript:void(0)" onclick="openLegalModal('terms')" data-i18n="footer_terms">Terms and Conditions</a>
+          <span class="footer-link-sep">|</span>
+          <a href="javascript:void(0)" onclick="openLegalModal('refund')" data-i18n="footer_refund">Refund and Cancellation</a>
+          <span class="footer-link-sep">|</span>
+          <a href="javascript:void(0)" onclick="openLegalModal('about')" data-i18n="footer_about">About Us</a>
+          <span class="footer-link-sep">|</span>
+          <a href="javascript:void(0)" onclick="openLegalModal('sitemap')" data-i18n="footer_sitemap">Site Map</a>
+        </div>
+
+        <!-- Footer Meta Text & Version -->
+        <div class="footer-meta-info-block">
+          <p class="meta-line">Best viewed in modern browsers (Chrome, Edge, Firefox, Safari) at 1920x1080 resolution.</p>
+          <p class="meta-line">© 2026, NIC. All Rights Reserved ® | Govt. of India</p>
+          <p class="meta-line">Last updated on Aug 04, 2026 ,Tuesday</p>
+          <p class="meta-line font-bold">Version 3.8.13</p>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /main-portal-view -->
+
+  <!-- ==============================================================
+       INTERACTIVE MODALS & SOLVED PROBLEM FLOWS
+       ============================================================== -->
+
+  <!-- 1. APPOINTMENT BOOKING WIZARD MODAL (SOLVES SLOT SCARCITY) -->
+  <div id="booking-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-navy">
+          <div class="modal-title-wrap">
+            <img src="assets/icons/ors_logo.png" alt="ORS" class="modal-header-logo" />
+            <h3 id="booking-modal-title">Book Hospital Appointment</h3>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('booking-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Wizard Steps Progress Bar -->
+          <div class="wizard-steps-indicator">
+            <div class="wizard-step active" id="w-step-1">1. State &amp; Hospital</div>
+            <div class="wizard-step" id="w-step-2">2. Department</div>
+            <div class="wizard-step" id="w-step-3">3. Slots &amp; Tatkal</div>
+            <div class="wizard-step" id="w-step-4">4. Verification</div>
+            <div class="wizard-step" id="w-step-5">5. Confirmation</div>
+          </div>
+
+          <!-- Wizard Stage 1: Hospital Selection -->
+          <div id="wizard-stage-1" class="wizard-stage active">
+            <div class="form-instruction-callout">
+              <span>ℹ️</span>
+              <p>Select your State and Government Medical College or AIIMS Institute.</p>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Select State / Union Territory <span class="required">*</span></label>
+                <select id="book-state-select" class="styled-input" onchange="onStateChanged()">
+                  <option value="">-- Choose State --</option>
+                  <option value="DL" selected>Delhi (National Capital Territory)</option>
+                  <option value="UP">Uttar Pradesh</option>
+                  <option value="MH">Maharashtra</option>
+                  <option value="UK">Uttarakhand</option>
+                  <option value="RJ">Rajasthan</option>
+                  <option value="BH">Bihar</option>
+                  <option value="KA">Karnataka</option>
+                  <option value="TN">Tamil Nadu</option>
+                  <option value="WB">West Bengal</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Select Hospital / Institute <span class="required">*</span></label>
+                <select id="book-hospital-select" class="styled-input" onchange="onHospitalChanged()">
+                  <option value="aiims-delhi" selected>AIIMS New Delhi (All India Institute of Medical Sciences)</option>
+                  <option value="safdarjung">Safdarjung Hospital &amp; VMMC, New Delhi</option>
+                  <option value="rml">Dr. Ram Manohar Lohia Hospital, New Delhi</option>
+                  <option value="aiims-rishikesh">AIIMS Rishikesh, Uttarakhand</option>
+                  <option value="aiims-jodhpur">AIIMS Jodhpur, Rajasthan</option>
+                  <option value="aiims-patna">AIIMS Patna, Bihar</option>
+                  <option value="nimhans">NIMHANS Bengaluru, Karnataka</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Case Distinction (Addresses Accessibility & Rural confusion: New Case vs Followup) -->
+            <div class="case-selection-box">
+              <label class="section-sublabel">Select Consultation Type <span class="required">*</span></label>
+              <div class="case-options-row">
+                <label class="case-card-label active" id="case-new-label">
+                  <input type="radio" name="case-type" value="new" checked onchange="updateCaseTypeUI()" />
+                  <div class="case-card-inner">
+                    <span class="case-icon">🆕</span>
+                    <strong>New Patient Case (नया मरीज़)</strong>
+                    <small>First time visit. New OPD registration and UHID creation.</small>
+                  </div>
+                </label>
+                <label class="case-card-label" id="case-follow-label">
+                  <input type="radio" name="case-type" value="followup" onchange="updateCaseTypeUI()" />
+                  <div class="case-card-inner">
+                    <span class="case-icon">🔄</span>
+                    <strong>Follow-up Visit (पुराना पर्चा / फॉलो-अप)</strong>
+                    <small>Already registered. Have an existing Central UHID or OPD card.</small>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="wizard-nav-actions right">
+              <button class="btn-primary" onclick="goToWizardStage(2)">Proceed to Department →</button>
+            </div>
+          </div>
+
+          <!-- Wizard Stage 2: Department Selection -->
+          <div id="wizard-stage-2" class="wizard-stage">
+            <div class="form-instruction-callout">
+              <span>🩺</span>
+              <p>Choose clinical department for consultation.</p>
+            </div>
+            <div class="form-group">
+              <label>Select Clinical Department <span class="required">*</span></label>
+              <select id="book-dept-select" class="styled-input" onchange="onDeptChanged()">
+                <option value="cardio" selected>Cardiology (हृदय रोग विभाग)</option>
+                <option value="nephro">Nephrology (गुर्दा एवं डायलिसिस विभाग)</option>
+                <option value="neuro">Neurology (तंत्रिका तंत्र विभाग)</option>
+                <option value="onco">Medical Oncology (कैंसर रोग विभाग)</option>
+                <option value="ortho">Orthopedics (हड्डी रोग विभाग)</option>
+                <option value="med">General Medicine (सामान्य चिकित्सा)</option>
+                <option value="pedia">Pediatrics (बाल रोग विभाग)</option>
+                <option value="derma">Dermatology (त्वचा रोग विभाग)</option>
+                <option value="gynae">Obstetrics &amp; Gynecology (स्त्री रोग)</option>
+              </select>
+            </div>
+
+            <div class="dept-info-card" id="dept-notice-card">
+              <div class="dept-info-header" id="dept-info-title">Cardiology Department Information</div>
+              <p id="dept-info-loc">Location: Dr. B.R. Ambedkar Institute Rotatory Cancer Hospital (IRCH) / CNC Block, Ground Floor.</p>
+              <p id="dept-info-schedule">OPD Days: Monday to Saturday (8:30 AM to 1:00 PM).</p>
+            </div>
+
+            <div class="wizard-nav-actions space-between">
+              <button class="btn-secondary" onclick="goToWizardStage(1)">← Back</button>
+              <button class="btn-primary" onclick="goToWizardStage(3)">Check Slot Calendar →</button>
+            </div>
+          </div>
+
+          <!-- Wizard Stage 3: Slot Calendar with Tatkal, Waitlist & Nearby Alternative (SOLVES ISSUE 1) -->
+          <div id="wizard-stage-3" class="wizard-stage">
+            <!-- 8:00 AM Slot Opening Countdown Ticker -->
+            <div class="tatkal-release-banner">
+              <div class="tatkal-banner-left">
+                <span class="tatkal-flame-icon">🔥</span>
+                <div>
+                  <strong>AIIMS Daily 8:00 AM Slot Release Window</strong>
+                  <p>Next high-demand slot batch opens at 8:00 AM sharp.</p>
+                </div>
+              </div>
+              <div class="tatkal-timer-badge" id="tatkal-countdown-badge">
+                Opens in: 05:28:14
+              </div>
+            </div>
+
+            <!-- Solves Perpetual "No Slots Available" in High-demand Specialties -->
+            <div class="scarcity-solution-box" id="scarcity-box">
+              <div class="scarcity-header">
+                <span class="alert-icon">⚠️</span>
+                <strong id="scarcity-dept-title">High Demand Notice for Cardiology at AIIMS New Delhi</strong>
+              </div>
+              <p>All regular online slots for the current cycle are booked within minutes. We have activated <strong>3 smart relief options</strong> for you below:</p>
+              
+              <div class="relief-options-grid">
+                <!-- Relief Option 1: Smart Waitlist -->
+                <div class="relief-option-card">
+                  <div class="relief-card-top">
+                    <span class="relief-icon">🔔</span>
+                    <strong>Smart Waitlist (Auto-Notify)</strong>
+                  </div>
+                  <p>Join the automated queue. The instant another patient cancels or reschedules, you will be auto-assigned a slot with an SMS/WhatsApp booking alert.</p>
+                  <button class="btn-waitlist" onclick="joinSmartWaitlist()">
+                    <span id="waitlist-btn-text">Join Waitlist (Queue #14)</span>
+                  </button>
+                </div>
+
+                <!-- Relief Option 2: Nearby Hospital Suggestion -->
+                <div class="relief-option-card">
+                  <div class="relief-card-top">
+                    <span class="relief-icon">🏥</span>
+                    <strong id="alt-hosp-slots">18 Slots at Safdarjung (2.3 km)</strong>
+                  </div>
+                  <p id="alt-hosp-desc">Safdarjung Cardiology has verified open slots for tomorrow. Same faculty &amp; zero waiting list.</p>
+                  <button class="btn-switch-hospital" onclick="switchToSafdarjung()">
+                    <span id="alt-hosp-btn">Switch to Safdarjung Hospital →</span>
+                  </button>
+                </div>
+
+                <!-- Relief Option 3: Emergency / Semi-Urgent Fast-track -->
+                <div class="relief-option-card">
+                  <div class="relief-card-top">
+                    <span class="relief-icon">🚨</span>
+                    <strong>Semi-Urgent Triage Quota</strong>
+                  </div>
+                  <p>For patients with doctor referral notes or urgent symptoms, request clinical triage quota allocation.</p>
+                  <button class="btn-triage" onclick="requestUrgentTriage()">
+                    <span>Apply for Urgency Quota</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Calendar Grid -->
+            <div class="calendar-wrapper">
+              <div class="calendar-header-bar">
+                <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
+                <h4 id="cal-month-title">October 2026</h4>
+                <button class="cal-nav-btn" onclick="nextMonth()">›</button>
+              </div>
+              <div class="calendar-legend">
+                <span class="legend-item"><span class="legend-dot green"></span> Available</span>
+                <span class="legend-item"><span class="legend-dot red"></span> Full / Closed</span>
+                <span class="legend-item"><span class="legend-dot yellow"></span> Tatkal Drop (8 AM)</span>
+                <span class="legend-item"><span class="legend-dot blue"></span> Selected</span>
+              </div>
+              <div class="calendar-grid" id="calendar-days-grid">
+                <!-- Populated dynamically via main.js -->
+              </div>
+            </div>
+
+            <div class="selected-slot-preview" id="selected-slot-box" style="display:none;">
+              <span>Selected Date: <strong id="selected-date-text">--</strong></span>
+              <span>Available Time Slots:</span>
+              <div class="time-chips-row" id="time-chips-container">
+                <button class="time-chip active" onclick="selectTimeChip(this)">09:00 AM - 10:00 AM</button>
+                <button class="time-chip" onclick="selectTimeChip(this)">10:00 AM - 11:00 AM</button>
+                <button class="time-chip" onclick="selectTimeChip(this)">11:00 AM - 12:00 PM</button>
+              </div>
+            </div>
+
+            <div class="wizard-nav-actions space-between">
+              <button class="btn-secondary" onclick="goToWizardStage(2)">← Back</button>
+              <button class="btn-primary" id="btn-proceed-to-auth" onclick="goToWizardStage(4)">Proceed to Patient Details →</button>
+            </div>
+          </div>
+
+          <!-- Wizard Stage 4: Authentication & Multi-Channel OTP (SOLVES ISSUE 3) -->
+          <div id="wizard-stage-4" class="wizard-stage">
+            <div class="auth-box-wrapper">
+              <h4>Patient Authentication &amp; eKYC</h4>
+              <p>Choose your preferred authentication method. High-reliability channels ensure zero OTP timeouts.</p>
+
+              <!-- Auth Tabs -->
+              <div class="auth-tabs-row">
+                <button class="auth-tab-btn active" onclick="switchAuthTab('mobile')">📱 Mobile + Multi-Rail OTP</button>
+                <button class="auth-tab-btn" onclick="switchAuthTab('abha')">💳 ABHA Health ID</button>
+                <button class="auth-tab-btn" onclick="switchAuthTab('aadhaar')">🆔 Aadhaar eKYC</button>
+              </div>
+
+              <!-- Tab 1: Mobile + Multi-Channel OTP -->
+              <div id="auth-panel-mobile" class="auth-tab-panel active">
+                <div class="form-group">
+                  <label>10-Digit Mobile Number <span class="required">*</span></label>
+                  <div class="input-with-prefix">
+                    <span class="prefix">+91</span>
+                    <input type="tel" id="patient-mobile-input" class="styled-input" placeholder="Enter 10-digit mobile number" maxlength="10" value="9876543210" />
+                  </div>
+                </div>
+
+                <!-- OTP Delivery Channel Selector (SOLVES SMS OTP DELAY CHALLENGE) -->
+                <div class="otp-channel-selection">
+                  <label class="section-sublabel">Select Instant OTP Channel:</label>
+                  <div class="channel-radio-group">
+                    <label><input type="radio" name="otp-channel" value="sms" checked /> 📩 Regular SMS</label>
+                    <label><input type="radio" name="otp-channel" value="whatsapp" /> 💬 WhatsApp Instant OTP</label>
+                    <label><input type="radio" name="otp-channel" value="voice" /> 📞 Automated Voice Call OTP</label>
+                  </div>
+                </div>
+
+                <button class="btn-send-otp" id="btn-send-otp" onclick="sendMultiRailOTP()">
+                  <span>Send One-Time Password (OTP)</span>
+                </button>
+
+                <!-- OTP Input Area -->
+                <div id="otp-entry-section" class="otp-entry-section" style="display:none;">
+                  <div class="otp-timer-row">
+                    <span class="otp-sent-notice">OTP sent to +91 9876543210</span>
+                    <span class="otp-countdown" id="otp-timer-display">Resend in 28s</span>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="otp-code-input" class="styled-input otp-large-input" placeholder="Enter 6-digit OTP" maxlength="6" value="123456" />
+                  </div>
+                  <div class="otp-fallbacks-row">
+                    <span>Didn't receive SMS?</span>
+                    <button class="btn-link-action" onclick="fallbackToWhatsAppOTP()">Switch to WhatsApp OTP</button>
+                    <span>|</span>
+                    <button class="btn-link-action" onclick="fallbackToVoiceOTP()">Get Call OTP</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 2: ABHA ID -->
+              <div id="auth-panel-abha" class="auth-tab-panel">
+                <div class="form-group">
+                  <label>14-Digit ABHA Number or ABHA Address <span class="required">*</span></label>
+                  <input type="text" id="abha-id-input" class="styled-input" placeholder="e.g., 91-1234-5678-9012 or yourname@abdm" />
+                </div>
+                <button class="btn-send-otp" onclick="authenticateViaABHA()">Verify ABHA &amp; Fetch Health Records</button>
+              </div>
+
+              <!-- Tab 3: Aadhaar eKYC with Emergency Offline Generator Fallback -->
+              <div id="auth-panel-aadhaar" class="auth-tab-panel">
+                <div class="form-group">
+                  <label>12-Digit Aadhaar Number <span class="required">*</span></label>
+                  <input type="password" id="aadhaar-number-input" class="styled-input" placeholder="XXXX-XXXX-XXXX" maxlength="12" />
+                </div>
+                <div class="aadhaar-disclaimer">
+                  🔒 We adhere to UIDAI eKYC standards. Aadhaar is used strictly for Unique Health ID (UHID) linkage.
+                </div>
+                <!-- UIDAI Server Fallback (SOLVES Aadhaar Integration Errors) -->
+                <div class="uidai-fallback-callout">
+                  <span>⚡ <strong>UIDAI Server Slow?</strong></span>
+                  <p>If UIDAI response lags >15 seconds, our system automatically generates a Provisional Verified UHID so your booking is never delayed.</p>
+                </div>
+                <button class="btn-send-otp" onclick="authenticateViaAadhaar()">Verify Aadhaar eKYC</button>
+              </div>
+            </div>
+
+            <!-- Patient Demographic Form -->
+            <div class="patient-demographics-card" id="patient-details-card">
+              <h5>Patient Particulars</h5>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label>Full Name <span class="required">*</span></label>
+                  <input type="text" id="p-name" class="styled-input" value="Ramesh Kumar" />
+                </div>
+                <div class="form-group">
+                  <label>Gender <span class="required">*</span></label>
+                  <select id="p-gender" class="styled-input">
+                    <option value="male" selected>Male (पुरुष)</option>
+                    <option value="female">Female (महिला)</option>
+                    <option value="transgender">Transgender (तृतीय लिंग)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Age <span class="required">*</span></label>
+                  <input type="number" id="p-age" class="styled-input" value="48" min="1" max="120" />
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-nav-actions space-between">
+              <button class="btn-secondary" onclick="goToWizardStage(3)">← Back</button>
+              <button class="btn-primary" onclick="confirmAppointmentAndBook()">Confirm &amp; Generate Slip →</button>
+            </div>
+          </div>
+
+          <!-- Wizard Stage 5: Authentic Holographic Appointment Slip (SOLVES ISSUE 5) -->
+          <div id="wizard-stage-5" class="wizard-stage">
+            <div class="success-header-badge">
+              <span class="success-tick">✅</span>
+              <h3>Appointment Confirmed Successfully!</h3>
+              <p>SMS &amp; WhatsApp confirmation delivered with official AIIMS gate pass QR code.</p>
+            </div>
+
+            <!-- Authentic Printable Slip -->
+            <div class="printable-slip-card" id="official-slip-preview">
+              <div class="slip-header-gov">
+                <img src="assets/icons/ors_logo.png" alt="ORS" class="slip-ors-logo" />
+                <div class="slip-header-titles">
+                  <h4>ONLINE REGISTRATION SYSTEM (ORS) - PATIENT APPOINTMENT SLIP</h4>
+                  <p>Ministry of Health &amp; Family Welfare, Govt. of India | National Informatics Centre</p>
+                </div>
+                <div class="slip-hologram-seal">
+                  <div class="hologram-circle">
+                    <span>GOVT OF INDIA</span>
+                    <strong>AUTHENTIC</strong>
+                    <small>★ NIC-ORS ★</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="slip-grid-details">
+                <div class="slip-cell"><strong>Appointment ID:</strong> <span id="slip-appt-id">ORS-2026-9812401</span></div>
+                <div class="slip-cell"><strong>UHID / Health ID:</strong> <span id="slip-uhid">DL-AIIMS-893120</span></div>
+                <div class="slip-cell"><strong>Hospital:</strong> <span id="slip-hospital">AIIMS New Delhi</span></div>
+                <div class="slip-cell"><strong>Department:</strong> <span id="slip-dept">Cardiology (CNC Block)</span></div>
+                <div class="slip-cell"><strong>Patient Name:</strong> <span id="slip-name">Ramesh Kumar</span></div>
+                <div class="slip-cell"><strong>Age / Gender:</strong> <span id="slip-demog">48 Y / Male</span></div>
+                <div class="slip-cell"><strong>Date &amp; Time:</strong> <span id="slip-datetime">02 Oct 2026, 09:30 AM</span></div>
+                <div class="slip-cell"><strong>Consultation Type:</strong> <span id="slip-case-type">New Patient OPD</span></div>
+              </div>
+
+              <div class="slip-footer-qr-row">
+                <div class="qr-code-box">
+                  <img src="assets/images/QR.png" alt="Gate Verification QR Code" class="slip-qr-img" />
+                  <span>Scan at AIIMS Gate Entry</span>
+                </div>
+                <div class="slip-anti-fraud-meta">
+                  <div class="anti-fraud-stamp">
+                    <span>🛡️ Cryptographically Verified by NIC eHospital Gateway</span>
+                    <p>Booking Fee: <strong>₹0.00 (Free of Cost)</strong>. No counter fees apply.</p>
+                    <p>Report fraud or unauthorized agents to Helpline 1800-11-4477.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slip-action-buttons">
+              <button class="btn-print" onclick="window.print()">🖨️ Print Appointment Slip</button>
+              <button class="btn-download-pdf" onclick="downloadSlipPDF()">📥 Download PDF</button>
+              <button class="btn-primary" onclick="closeModal('booking-modal')">Done &amp; Return to Home</button>
+            </div>
+          </div>
+
+        </div><!-- /modal-body -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MULTI-RAIL AUTHENTICATION MODAL (Register / Login Yellow Pill Button) -->
+  <div id="auth-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-navy">
+          <div class="modal-title-wrap">
+            <img src="assets/icons/ors_logo.png" alt="ORS" class="modal-header-logo" />
+            <h3>Patient / User Login</h3>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('auth-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="auth-tabs-row">
+            <button class="auth-tab-btn active" onclick="switchLoginRail('mobile')">Mobile OTP</button>
+            <button class="auth-tab-btn" onclick="switchLoginRail('abha')">ABHA Address</button>
+            <button class="auth-tab-btn" onclick="switchLoginRail('doctor')">Staff / Doctor</button>
+          </div>
+
+          <div id="login-rail-mobile" class="login-rail-panel active">
+            <div class="form-group">
+              <label>Mobile Number</label>
+              <input type="tel" class="styled-input" id="login-mobile-input" placeholder="Enter registered mobile number" value="9876543210" />
+            </div>
+            <div class="form-group">
+              <label>Receive OTP Via</label>
+              <div class="channel-radio-group">
+                <label><input type="radio" name="login-channel" value="sms" checked /> SMS</label>
+                <label><input type="radio" name="login-channel" value="whatsapp" /> WhatsApp</label>
+                <label><input type="radio" name="login-channel" value="call" /> Voice Call</label>
+              </div>
+            </div>
+            <button class="btn-primary btn-block" onclick="performLogin()">Send OTP &amp; Login</button>
+          </div>
+
+          <div id="login-rail-abha" class="login-rail-panel">
+            <div class="form-group">
+              <label>ABHA ID (Health ID)</label>
+              <input type="text" class="styled-input" placeholder="Enter ABHA number (e.g. 14 digits) or abha address" />
+            </div>
+            <button class="btn-primary btn-block" onclick="performLogin()">Login with ABHA</button>
+          </div>
+
+          <div id="login-rail-doctor" class="login-rail-panel">
+            <div class="form-group">
+              <label>Doctor / Staff Username</label>
+              <input type="text" class="styled-input" placeholder="Enter eHospital credentials" />
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="styled-input" placeholder="••••••••" />
+            </div>
+            <button class="btn-primary btn-block" onclick="performLogin()">Staff Login</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. LIVE SYSTEM HEALTH & FAILOVER MIRROR MODAL (SOLVES NIC DOWNTIME) -->
+  <div id="system-health-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-navy">
+          <div class="modal-title-wrap">
+            <span class="status-indicator-green">●</span>
+            <h3>NIC Cloud &amp; eHospital System Monitor</h3>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('system-health-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Real-time gateway status across national health infrastructure:</p>
+          <div class="health-metrics-list">
+            <div class="health-row">
+              <span class="service-name">NIC Cloud Primary Node (New Delhi)</span>
+              <span class="service-status online">Online (18ms) ✓</span>
+            </div>
+            <div class="health-row">
+              <span class="service-name">NIC Disaster Recovery Mirror (Hyderabad)</span>
+              <span class="service-status standby">Hot Standby (24ms) ✓</span>
+            </div>
+            <div class="health-row">
+              <span class="service-name">AIIMS New Delhi Local HIS Gateway</span>
+              <span class="service-status online">Online (14ms) ✓</span>
+            </div>
+            <div class="health-row">
+              <span class="service-name">UIDAI Aadhaar Authentication Gateway</span>
+              <span class="service-status online">Operational (99.8%) ✓</span>
+            </div>
+            <div class="health-row">
+              <span class="service-name">CDAC High-Volume SMS Gateway</span>
+              <span class="service-status online">Active (Zero Delay) ✓</span>
+            </div>
+          </div>
+
+          <!-- Redundant Mirror Switch -->
+          <div class="failover-control-box">
+            <div class="failover-text">
+              <strong>Emergency Server Failover Switch:</strong>
+              <p>If experiencing local network lag or regional ISP freeze, switch to Government Backup Mirror.</p>
+            </div>
+            <button class="btn-failover" onclick="toggleServerMirror()">
+              <span id="failover-btn-label">Switch to Gov Backup Mirror</span>
+            </button>
+          </div>
+
+          <!-- Resilient Offline Mode Test -->
+          <div class="offline-mode-callout">
+            <strong>Resilient Offline Queue Guarantee:</strong>
+            <p>Even during nationwide telecom cuts or ransomware drills, our offline worker queues patient data in local encrypted storage and assigns an offline token that syncs automatically.</p>
+            <button class="btn-test-offline" onclick="simulateOfflineMode()">Test Offline Resilient Mode</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ANTI-FRAUD VERIFICATION & SCAM REPORT MODAL (SOLVES FAKE BOOKING PORTALS) -->
+  <div id="fraud-checker-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger">
+          <div class="modal-title-wrap">
+            <span>🛡️</span>
+            <h3>Official Anti-Fraud Verification Shield</h3>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('fraud-checker-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="fraud-notice-box">
+            <h4>How to identify Fake Booking Portals:</h4>
+            <ul>
+              <li><strong>Check URL:</strong> Official website is ONLY <code>ors.gov.in</code>. Fake sites use <code>.com</code>, <code>.in.net</code>, or WhatsApp links.</li>
+              <li><strong>Payment Request:</strong> ORS never asks for UPI, Google Pay, or Paytm fees for regular OPD appointments.</li>
+              <li><strong>Official QR:</strong> Every genuine slip has an NIC cryptographic seal and scanner-readable gate pass.</li>
+            </ul>
+          </div>
+
+          <!-- Appointment Slip Authenticity Verifier -->
+          <div class="slip-verifier-box">
+            <h4>Verify Your Appointment Slip Authenticity:</h4>
+            <div class="form-group inline-flex">
+              <input type="text" class="styled-input" id="verify-slip-input" placeholder="Enter Registration ID (e.g. ORS-2026-XXXX)" />
+              <button class="btn-verify" onclick="verifySlipAuthenticity()">Verify Now</button>
+            </div>
+            <div id="verification-result-box" class="verification-result-box" style="display:none;"></div>
+          </div>
+
+          <!-- Report Fraud / Scam Agent -->
+          <div class="report-agent-box">
+            <h4>Report a Fraudulent Agent or Fake Website:</h4>
+            <div class="form-group">
+              <input type="text" class="styled-input" id="scam-url-input" placeholder="Fake Website URL or WhatsApp Number" />
+            </div>
+            <button class="btn-danger btn-block" onclick="submitScamReport()">Submit Incident to Cyber Crime Cell (cybercrime.gov.in)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. OTHER FACILITIES MODAL (OPD Card, Payments, Lab Report, Blood Bank) -->
+  <div id="facility-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-navy">
+          <div class="modal-title-wrap">
+            <h3 id="facility-modal-title">Facility Service</h3>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('facility-modal')">✕</button>
+        </div>
+        <div class="modal-body" id="facility-modal-body">
+          <!-- Populated by main.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ACCESSIBILITY & GRAMIN SAHAYAK MODE MENU -->
+  <div id="accessibility-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-navy">
+          <div class="modal-title-wrap">
+            <span>👤</span>
+            <h3>Accessibility &amp; Assistive Tools</h3>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('accessibility-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Text Size Controls -->
+          <div class="access-control-item">
+            <label>Text Size Adjustment</label>
+            <div class="btn-group-row">
+              <button class="btn-access" onclick="adjustFontSize(-1)">A- (Smaller)</button>
+              <button class="btn-access" onclick="adjustFontSize(0)">A (Normal)</button>
+              <button class="btn-access" onclick="adjustFontSize(1)">A+ (Larger)</button>
+            </div>
+          </div>
+
+          <!-- High Contrast Mode -->
+          <div class="access-control-item">
+            <label>Color Contrast</label>
+            <div class="btn-group-row">
+              <button class="btn-access" onclick="setContrast('normal')">Standard</button>
+              <button class="btn-access" onclick="setContrast('high')">High Contrast (Dark)</button>
+              <button class="btn-access" onclick="setContrast('yellow')">Yellow on Black</button>
+            </div>
+          </div>
+
+          <!-- Gramin / Easy Mode (SOLVES Rural & Non-tech-savvy Digital Barriers) -->
+          <div class="access-control-item">
+            <label>सरल ग्रामीण सहायक मोड (Easy Rural Mode)</label>
+            <p>Simplifies interface with giant touch buttons, voice read-aloud, and high readability.</p>
+            <button class="btn-gramin-toggle" onclick="toggleGraminMode()">
+              <span id="gramin-mode-label">Enable सरल ग्रामीण मोड</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic Informational Modals (FAQ, Feedback, Contact, Whats New, etc.) -->
+  <div id="info-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-navy">
+          <h3 id="info-modal-title">Information</h3>
+          <button class="modal-close-btn" onclick="closeModal('info-modal')">✕</button>
+        </div>
+        <div class="modal-body" id="info-modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING VOICE NAVIGATION ASSISTANT (SOLVES Digital Literacy Barriers) -->
+  <div class="floating-voice-widget" id="voice-widget">
+    <button class="voice-assistant-fab" onclick="toggleVoiceAssistant()" title="Voice Assistant / आवाज़ सहायक">
+      <span class="fab-icon">🗣️</span>
+      <span class="fab-text" id="fab-voice-text">Audio Guide</span>
+    </button>
+    <div class="voice-bubble" id="voice-bubble" style="display:none;">
+      <span id="voice-bubble-text">Click any button or menu to hear instructions in your language.</span>
+      <button class="bubble-close" onclick="closeVoiceBubble()">✕</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/languages.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
